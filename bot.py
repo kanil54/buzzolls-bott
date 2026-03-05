@@ -10,6 +10,7 @@ CHAT_ID = 1229577244
 URL = "https://it.buzzolls.ru/Courier/Home"
 
 bot = telebot.TeleBot(TOKEN)
+bot.send_message(CHAT_ID, "✅ Бот запущен")
 
 sent_orders = set()
 
