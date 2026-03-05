@@ -4,7 +4,6 @@ import telebot
 import time
 
 TOKEN = "8491944855:AAFz0r4DJ8nPTSKz5lBUP4jLdonBPCHsn6o"
-"
 CHAT_ID = 1229577244
 
 URL = "https://it.buzzolls.ru/Courier/Home"
