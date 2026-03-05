@@ -2,45 +2,45 @@ import time
 import telebot
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 
-TOKEN = "8491944855:AAFz0r4DJ8nPTSKz5lBUP4jLdonBPCHsn6o"
-CHAT_ID = 1229577244
+TOKEN = "ТВОЙ_ТОКЕН"
+ADMIN_ID = 1229577244
 
 bot = telebot.TeleBot(TOKEN)
 
-URL = "https://it.buzzolls.ru/Courier/Home"
+url = "https://it.buzzolls.ru/Courier/Home"
 
-seen_orders = set()
+options = Options()
+options.add_argument("--headless")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--disable-dev-shm-usage")
+driver = webdriver.Chrome(options=options)
 
-driver = webdriver.Chrome(options=chrome_options)
+driver.get(url)
 
-driver.get(URL)
+bot.send_message(ADMIN_ID, "✅ Бот запущен")
 
-print("Бот запущен")
+orders = []
 
 while True:
     try:
-        orders = driver.find_elements(By.XPATH, "//*[contains(text(),'Заказ №')]")
+        driver.refresh()
+        time.sleep(5)
 
-        for order in orders:
-            text = order.text
+        page = driver.page_source
 
-            if text not in seen_orders:
-                seen_orders.add(text)
+        if "Заказ" in page:
+            if page not in orders:
+                orders.append(page)
 
                 bot.send_message(
-                    CHAT_ID,
-                    f"🚨 Новый заказ!\n{text}"
+                    ADMIN_ID,
+                    "🚨 Новый заказ!\n\nПроверь панель курьера"
                 )
 
-        time.sleep(20)
-        driver.refresh()
+        time.sleep(10)
 
     except Exception as e:
         print(e)
+        time.sleep(10)
