@@ -9,35 +9,34 @@ CHAT_ID = 1229577244
 URL = "https://it.buzzolls.ru/Courier/Home"
 
 bot = telebot.TeleBot(TOKEN)
-bot.send_message(CHAT_ID, "✅ Бот запущен")
 
-sent_orders = set()
+seen_orders = set()
 
 def check_orders():
-
-    headers = {"User-Agent": "Mozilla/5.0"}
-
-    r = requests.get(URL, headers=headers)
-
-    soup = BeautifulSoup(r.text, "html.parser")
-
-    orders = soup.find_all(string=lambda t: "Заказ №" in t)
-
-    for order in orders:
-
-        text = order.strip()
-
-        if text not in sent_orders:
-
-            sent_orders.add(text)
-
-            bot.send_message(CHAT_ID, f"🚨 Новый заказ\n\n{text}")
-
-while True:
+    global seen_orders
 
     try:
-        check_orders()
+        r = requests.get(URL)
+        soup = BeautifulSoup(r.text, "html.parser")
+
+        orders = soup.find_all(string=lambda text: "Заказ №" in text)
+
+        for order in orders:
+            order_id = order.strip()
+
+            if order_id not in seen_orders:
+                seen_orders.add(order_id)
+
+                bot.send_message(
+                    CHAT_ID,
+                    f"🚨 Новый заказ!\n{order_id}\n\nОткрой сайт чтобы принять."
+                )
+
     except Exception as e:
         print(e)
 
-    time.sleep(15)
+print("Бот запущен")
+
+while True:
+    check_orders()
+    time.sleep(20)
